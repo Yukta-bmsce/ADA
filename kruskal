@@ -1,0 +1,89 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define MAX 100
+
+struct edge{
+    int u,v ,weight;
+};
+
+int parent[MAX];
+
+int find(int i){
+    while(parent[i]!=-1){
+        i=parent[i];
+    }
+    return i;
+}
+
+void Union(int i,int j)
+{
+    int rootI=find(i);
+    int rootJ=find(j);
+    
+    if(rootI!=rootJ){
+        parent[rootJ]=rootI;
+    }
+}
+
+void kruskal(int n,struct edge e[],int m)
+{
+    int count=0;
+    int sum=0;
+    struct edge mst[MAX];
+    for(int i=0;i<n;i++)
+    {
+        parent[i]=-1;
+    }
+    for(int i=0;i<m-1;i++)
+    {
+        for(int j=i+1;j<m;j++)
+        {
+            if(e[i].weight>e[j].weight)
+            {
+                struct edge temp=e[i];
+                e[i]=e[j];
+                e[j]=temp;
+            }
+        }
+    }
+    for(int i=0;i<m;i++)
+    {
+        int u=e[i].u;
+        int v=e[i].v;
+        int rootU=find(u);
+        int rootV=find(v);
+        if(rootU!=rootV){
+            mst[count]=e[i];
+            count++;
+            sum+=e[i].weight;
+            Union(rootU,rootV);
+            
+            if(count==n-1){
+                break;
+            }
+        }
+    }
+    printf("\nedges in the MST:\n");
+    for(int i=0;i<count;i++)
+    {
+        printf("%d-%d(weight:%d)\n",mst[i].u,mst[i].v,mst[i].weight);
+    }
+    printf("total weight of the MST:%d",sum);
+}
+int main() {
+    int n, m;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter the number of edges: ");
+    scanf("%d", &m);
+
+    struct edge e[m];
+    printf("Enter the edges (u v weight):\n");
+    for (int i = 0; i < m; i++) {
+        scanf("%d %d %d", &e[i].u, &e[i].v, &e[i].weight);
+    }
+    kruskal(n, e, m);
+
+    return 0;
+}
