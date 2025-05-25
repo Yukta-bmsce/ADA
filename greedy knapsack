@@ -1,0 +1,62 @@
+#include<stdio.h>
+#define MAX 10
+
+struct item{
+    int index;
+    int value,weight;
+    float ratio;
+};
+
+void sortitems(struct item items[],int n)
+{
+    struct item temp;
+    for(int i=0;i<n-1;i++)
+    {
+        for(int j=i+1;j<n;j++){
+            if(items[j].ratio>items[i].ratio){
+                temp=items[i];
+                items[i]=items[j];
+                items[j]=temp;
+            }
+        }
+    }
+}
+int main()
+{
+    int n,capacity;
+    struct item items[MAX];
+    
+    printf("enter the number of items:");
+    scanf("%d",&n);
+    
+    printf("enter the capacity:");
+    scanf("%d",&capacity);
+    
+    for(int i=0;i<n;i++){
+        printf("enter the value and weight of the item %d:",i+1);
+        scanf("%d %d",&items[i].value,&items[i].weight);
+        items[i].ratio=(float)items[i].value/items[i].weight;
+        items[i].index=i+1;
+    }
+    sortitems(items,n);
+    
+    float totalValue=0.0;
+    int remaining=capacity;
+    
+    printf("\nselected weights:\n");
+    for(int i=0;i<n && remaining>0;i++)
+    {
+        if(items[i].weight<=remaining){
+        remaining-=items[i].weight;
+        totalValue+=items[i].value;
+        printf("item %d:%d(full)\n",items[i].index,items[i].weight);
+        }else{
+            float fraction=(float)remaining/items[i].weight;
+            totalValue+=items[i].value*fraction;
+            printf("item %d:%.2f(fractional)\n",items[i].index,(float)remaining);
+            remaining=0;
+        }
+    }
+    printf("total value of knapsack:%f",totalValue);
+    return 0;
+}
